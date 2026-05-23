@@ -1,0 +1,64 @@
+@host = localhost:8080/auth
+@token = eyJhbGciOiJIUzM4NCJ9... (Replace with real token after login)
+
+### 1. Auth: Login
+POST http://{{host}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "admin123"
+}
+
+### 2. Courses: List All
+GET http://{{host}}/api/courses
+Authorization: Bearer {{token}}
+
+### 3. Courses: Create
+POST http://{{host}}/api/courses
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Sistemas Operativos",
+    "description": "Conceptos de procesos, memoria y E/S",
+    "code": "SO101",
+    "credits": 4,
+    "teacherId": 2
+}
+
+### 4. Courses: Enroll Student
+POST http://{{host}}/api/courses/1/enroll/3
+Authorization: Bearer {{token}}
+
+### 5. Activities: Create (Professor/Admin)
+POST http://{{host}}/api/activities
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Parcial 1",
+    "description": "Examen sobre gestión de procesos",
+    "deadline": "2026-05-15T23:59:59",
+    "weight": 20.0,
+    "courseId": 1
+}
+
+### 6. Activities: Get by Course
+GET http://{{host}}/api/activities/course/1
+Authorization: Bearer {{token}}
+
+### 7. Submissions: Create (Student)
+POST http://{{host}}/api/submissions
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "content": "https://github.com/student/os-project",
+    "activityId": 1,
+    "studentId": 3
+}
+
+### 8. Submissions: Grade (Professor)
+PATCH http://{{host}}/api/submissions/1/grade?grade=4.5&feedback=Buen trabajo
+Authorization: Bearer {{token}}
