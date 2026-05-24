@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../auth/AuthContext';
 import { request } from '../api/client';
+import '../styles/LoginPage.css';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -30,217 +31,53 @@ const LoginPage = () => {
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+    <div className="login-root">
+      <div className="blob blob-1" />
+      <div className="blob blob-2" />
+      <div className="blob blob-3" />
+      <div className="blob blob-4" />
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+      <div className="login-panel">
+        <div className="login-badge">🎓</div>
+        <h1 className="login-title">Bienvenido<br />de nuevo</h1>
+        <p className="login-sub">Ingresa tus credenciales para continuar</p>
 
-        .login-root {
-          min-height: 100vh;
-          display: flex;
-          font-family: 'DM Sans', sans-serif;
-          background: #0f0f13;
-          overflow: hidden;
-          position: relative;
-        }
+        {error && <div className="login-error">⚠️ {error}</div>}
 
-        /* animated blobs */
-        .blob {
-          position: absolute;
-          border-radius: 50%;
-          filter: blur(80px);
-          opacity: 0.55;
-          animation: float 8s ease-in-out infinite;
-        }
-        .blob-1 { width: 500px; height: 500px; background: #ff3cac; top: -150px; left: -150px; animation-delay: 0s; }
-        .blob-2 { width: 400px; height: 400px; background: #784ba0; top: 200px; right: -100px; animation-delay: -3s; }
-        .blob-3 { width: 350px; height: 350px; background: #2b86c5; bottom: -100px; left: 200px; animation-delay: -5s; }
-        .blob-4 { width: 250px; height: 250px; background: #ffcc00; bottom: 100px; right: 250px; animation-delay: -2s; }
+        <form onSubmit={handleSubmit}>
+          <div className="field-wrap">
+            <label className="field-label">Usuario</label>
+            <input
+              className="field-input"
+              placeholder="ej. admin"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              autoFocus
+              required
+            />
+          </div>
+          <div className="field-wrap">
+            <label className="field-label">Contraseña</label>
+            <input
+              className="field-input"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <button className="login-btn" type="submit" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar →'}
+          </button>
+        </form>
 
-        @keyframes float {
-          0%, 100% { transform: translateY(0px) scale(1); }
-          50% { transform: translateY(-30px) scale(1.05); }
-        }
-
-        .login-panel {
-          position: relative;
-          z-index: 10;
-          margin: auto;
-          width: 420px;
-          background: rgba(255,255,255,0.06);
-          border: 1px solid rgba(255,255,255,0.15);
-          border-radius: 28px;
-          padding: 52px 44px;
-          backdrop-filter: blur(24px);
-          box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-          animation: slideUp 0.6s cubic-bezier(.22,1,.36,1) both;
-        }
-
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(40px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .login-badge {
-          width: 56px; height: 56px;
-          border-radius: 16px;
-          background: linear-gradient(135deg, #ff3cac, #784ba0, #2b86c5);
-          display: flex; align-items: center; justify-content: center;
-          font-size: 26px;
-          margin-bottom: 20px;
-          box-shadow: 0 8px 24px rgba(255,60,172,0.4);
-        }
-
-        .login-title {
-          font-family: 'Syne', sans-serif;
-          font-size: 32px;
-          font-weight: 800;
-          color: #fff;
-          line-height: 1.1;
-          margin-bottom: 6px;
-        }
-
-        .login-sub {
-          font-size: 14px;
-          color: rgba(255,255,255,0.45);
-          margin-bottom: 36px;
-        }
-
-        .login-error {
-          background: rgba(255, 80, 80, 0.15);
-          border: 1px solid rgba(255,80,80,0.4);
-          color: #ff8080;
-          border-radius: 10px;
-          padding: 10px 14px;
-          font-size: 13px;
-          margin-bottom: 20px;
-        }
-
-        .field-wrap { margin-bottom: 18px; }
-
-        .field-label {
-          display: block;
-          font-size: 12px;
-          font-weight: 500;
-          color: rgba(255,255,255,0.5);
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          margin-bottom: 8px;
-        }
-
-        .field-input {
-          width: 100%;
-          background: rgba(255,255,255,0.07);
-          border: 1px solid rgba(255,255,255,0.12);
-          border-radius: 12px;
-          padding: 13px 16px;
-          font-size: 15px;
-          font-family: 'DM Sans', sans-serif;
-          color: #fff;
-          outline: none;
-          transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-        }
-        .field-input::placeholder { color: rgba(255,255,255,0.2); }
-        .field-input:focus {
-          border-color: #ff3cac;
-          background: rgba(255,60,172,0.08);
-          box-shadow: 0 0 0 3px rgba(255,60,172,0.15);
-        }
-
-        .login-btn {
-          width: 100%;
-          margin-top: 10px;
-          padding: 15px;
-          border: none;
-          border-radius: 14px;
-          font-family: 'Syne', sans-serif;
-          font-size: 16px;
-          font-weight: 700;
-          color: #fff;
-          cursor: pointer;
-          background: linear-gradient(135deg, #ff3cac 0%, #784ba0 50%, #2b86c5 100%);
-          background-size: 200% 200%;
-          animation: gradShift 4s ease infinite;
-          transition: transform 0.15s, box-shadow 0.15s;
-          box-shadow: 0 8px 28px rgba(255,60,172,0.35);
-          position: relative;
-          overflow: hidden;
-        }
-        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .login-btn:not(:disabled):hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 36px rgba(255,60,172,0.5);
-        }
-        .login-btn:not(:disabled):active { transform: translateY(0); }
-
-        @keyframes gradShift {
-          0%   { background-position: 0% 50%; }
-          50%  { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-
-        .login-hint {
-          margin-top: 28px;
-          text-align: center;
-          font-size: 12px;
-          color: rgba(255,255,255,0.3);
-          line-height: 1.8;
-        }
-        .login-hint span {
-          color: rgba(255,255,255,0.55);
-          font-weight: 500;
-        }
-      `}</style>
-
-      <div className="login-root">
-        <div className="blob blob-1" />
-        <div className="blob blob-2" />
-        <div className="blob blob-3" />
-        <div className="blob blob-4" />
-
-        <div className="login-panel">
-          <div className="login-badge">🎓</div>
-          <h1 className="login-title">Bienvenido<br/>de nuevo</h1>
-          <p className="login-sub">Ingresa tus credenciales para continuar</p>
-
-          {error && <div className="login-error">⚠️ {error}</div>}
-
-          <form onSubmit={handleSubmit}>
-            <div className="field-wrap">
-              <label className="field-label">Usuario</label>
-              <input
-                className="field-input"
-                placeholder="ej. admin"
-                value={username}
-                onChange={e => setUsername(e.target.value)}
-                autoFocus
-                required
-              />
-            </div>
-            <div className="field-wrap">
-              <label className="field-label">Contraseña</label>
-              <input
-                className="field-input"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button className="login-btn" type="submit" disabled={loading}>
-              {loading ? 'Ingresando...' : 'Ingresar →'}
-            </button>
-          </form>
-
-          <p className="login-hint">
-            Usuarios de prueba<br/>
-            <span>admin / admin123</span> · <span>profesor / prof123</span>
-          </p>
-        </div>
+        <p className="login-hint">
+          Usuarios de prueba<br />
+          <span>admin / admin123</span> · <span>profesor / prof123</span>
+        </p>
       </div>
-    </>
+    </div>
   );
 };
 

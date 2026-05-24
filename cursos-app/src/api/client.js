@@ -13,8 +13,9 @@ export async function request(path, options = {}) {
   });
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || 'Error en la petición');
+    const errorMessage = response.headers.get('X-Error-Message');
+    const bodyMessage = await response.text();
+    throw new Error(errorMessage || bodyMessage || 'Error en la petición');
   }
 
   if (response.status === 204) return null;
