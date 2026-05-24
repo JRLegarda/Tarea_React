@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     path: '*',
     element: <Navigate to="/login" replace />,
   },
-]);
+],{ basename: '/clmb/cursos-app' });
 
 function App() {
   return (

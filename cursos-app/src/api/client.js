@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/auth';
+const API_URL = '/clmb/courseapi/auth';
 
 export async function request(path, options = {}) {
   const token = localStorage.getItem('token');
